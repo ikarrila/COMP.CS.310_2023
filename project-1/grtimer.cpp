@@ -29,7 +29,12 @@ void GrTimer::closing()
 void GrTimer::timerEvent(QTimerEvent*)
 {
     qDebug() << "GrTimer tick";
+    std::unique_lock<std::mutex> lock(world_mutex);
+    world_cv.wait(lock, [&]() { return world_updated; });
+
     graphics::draw_board();
     target_->setPixmap( *(graphics::current_pixmap) );
     target_->scene()->update();
+
+    world_updated = false;
 }
