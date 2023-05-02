@@ -23,6 +23,7 @@ namespace world
 
     void init(void);
     void next_generation(void);
+    void update_concurrent();
 
     // --------------------------------------------------------------------------------------------
     // various helper routines to process (x,y) coordinates with one flat std::array datastructure:

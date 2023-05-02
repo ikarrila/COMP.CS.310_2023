@@ -55,7 +55,8 @@ int main(int argc, char *argv[])
     std::thread update( [&]() {
         while(world::running) {
           std::this_thread::sleep_for( config::world_tick );
-          world::next_generation();
+          world::update_concurrent();
+          //world::next_generation();
         };
     });
 

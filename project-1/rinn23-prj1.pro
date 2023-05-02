@@ -8,6 +8,7 @@ SOURCES += \
     main.cpp \
     grtimer.cpp \
     stopwatch.cpp \
+    thread_pool.cpp \
     world.cpp
 
 HEADERS += \
@@ -15,6 +16,7 @@ HEADERS += \
     graphics.hh \
     grtimer.hh \
     stopwatch.hh \
+    thread_pool.hh \
     tuni.hh \
     world.hh
 
