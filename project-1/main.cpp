@@ -54,9 +54,15 @@ int main(int argc, char *argv[])
     // simulation world
     std::thread update( [&]() {
         while(world::running) {
-          std::this_thread::sleep_for( config::world_tick );
-          world::update_concurrent();
-          //world::next_generation();
+            std::this_thread::sleep_for( config::world_tick );
+
+            {
+                std::unique_lock<std::mutex> lock(world_mutex);
+                world::update_concurrent();
+                world_updated = true;
+                //world::next_generation();
+            }
+            world_cv.notify_one();
         };
     });
 
