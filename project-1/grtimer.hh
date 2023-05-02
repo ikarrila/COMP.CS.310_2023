@@ -14,9 +14,10 @@ TUNI_WARN_ON()
 // 2. get notification of the application closing
 //
 
-std::mutex world_mutex;
-std::condition_variable world_cv;
-bool world_updated = false;
+
+extern std::mutex world_mutex;
+extern std::condition_variable world_cv;
+extern bool world_updated;
 
 class GrTimer : public QObject
 {

@@ -11,6 +11,9 @@ TUNI_WARN_OFF()
 #include <QGraphicsPixmapItem>
 TUNI_WARN_ON()
 
+std::mutex world_mutex;
+std::condition_variable world_cv;
+bool world_updated = false;
 
 GrTimer::GrTimer( QGraphicsPixmapItem* target )
     : QObject(), target_(target)

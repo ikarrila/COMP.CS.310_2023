@@ -19,8 +19,8 @@ namespace config
 
     // frequency of simulation and graphics updates
     using namespace std::chrono_literals;
-    const auto world_tick = 1ms;
-    const auto graphics_tick = 1ms;
+    const auto world_tick = 20ms;
+    const auto graphics_tick = 20ms;
 
     const auto board_size = width * height;
     static_assert( board_size < std::numeric_limits<uint_fast32_t>::max(),
