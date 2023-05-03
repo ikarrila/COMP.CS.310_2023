@@ -9,22 +9,27 @@ TUNI_WARN_OFF()
 TUNI_WARN_ON()
 
 #include <iostream>
+#include <mutex>
 
 namespace graphics {
 
 QPixmap* current_pixmap = nullptr;
 QPixmap* next_pixmap = nullptr;
+std::mutex pixmap_mutex;
 
 
 void init(void) {
+    pixmap_mutex.lock();
     current_pixmap = new QPixmap( config::width, config::height );
     current_pixmap->fill( bgColor );
     next_pixmap = new QPixmap( config::width, config::height );
     next_pixmap->fill( bgColor );
+    pixmap_mutex.unlock();
 }
 
 void draw_board()
 {
+    pixmap_mutex.lock();
     QPainter painter(next_pixmap);
     stopwatch clock;
 
@@ -45,6 +50,7 @@ void draw_board()
     std::cerr << "graphics pixmap created in: " << clock.elapsed() << std::endl;
 
     std::swap( next_pixmap, current_pixmap );
+    pixmap_mutex.unlock();
 }
 
 
