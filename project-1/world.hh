@@ -19,7 +19,7 @@ namespace world
     extern std::unique_ptr< world_t > next;
 
     // is world simulation running or should it stop?
-    extern bool running;
+    extern std::atomic<bool> running;
 
     void init(void);
     void next_generation(void);

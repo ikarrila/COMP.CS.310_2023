@@ -14,6 +14,7 @@ TUNI_WARN_ON()
 #include <thread>
 
 #include "thread_pool.hh"
+//#include "grtimer.hh"
 
 namespace world {
 
@@ -21,7 +22,7 @@ namespace world {
 std::unique_ptr< world_t > current;
 std::unique_ptr< world_t > next;
 
-bool running = true;
+std::atomic<bool> running = true;
 
 namespace {
     // QtCreator might give non-pod warning here, explanation:
