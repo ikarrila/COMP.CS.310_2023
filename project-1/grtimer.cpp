@@ -13,7 +13,7 @@ TUNI_WARN_ON()
 
 std::mutex world_mutex;
 std::condition_variable world_cv;
-bool world_updated = false;
+std::atomic<bool> world_updated = false;
 
 GrTimer::GrTimer( QGraphicsPixmapItem* target )
     : QObject(), target_(target)
@@ -33,11 +33,12 @@ void GrTimer::timerEvent(QTimerEvent*)
 {
     qDebug() << "GrTimer tick";
     std::unique_lock<std::mutex> lock(world_mutex);
-    world_cv.wait(lock, [&]() { return world_updated; });
+    world_cv.wait(lock, [&]() { return world_updated.load(); });
 
     graphics::draw_board();
     target_->setPixmap( *(graphics::current_pixmap) );
     target_->scene()->update();
 
     world_updated = false;
+
 }

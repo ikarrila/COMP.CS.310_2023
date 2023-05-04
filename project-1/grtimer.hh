@@ -17,7 +17,7 @@ TUNI_WARN_ON()
 
 extern std::mutex world_mutex;
 extern std::condition_variable world_cv;
-extern bool world_updated;
+extern std::atomic<bool> world_updated;
 
 class GrTimer : public QObject
 {
@@ -27,7 +27,6 @@ public:
 
 public slots:
     void closing();
-
 protected:
     void timerEvent(QTimerEvent*) override;
 
