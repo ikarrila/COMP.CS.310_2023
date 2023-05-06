@@ -54,4 +54,8 @@ Ryhmän tekemää:
 
 * mutex world_mutex, condition_variable world_cv, atomic<bool> world_updated 
 
+* world::running muutettu atomiseksi
+
+* Tickrate sekä maailmalle, että grafiikalle laskettu 200ms -> 20ms  
+
 Suunnitelmana oli jakaa maailma chunkkeihin, joita jaetaan threadeille ajoon. Kaikkien threadien valmistuttua lopetetaan threadpool ja päivitetään iteraatio. Threadien synkronoituminen grafiikkapiirturin kanssa varmistetaan omalla lukituksellaan. Mutex world_mutex etc. pitää huolen, ettei update-thread(ja sen threadpool threadit) päivitä maailmaa samaan aikaan kuin main-thread piirtää sitä. 
