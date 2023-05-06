@@ -17,8 +17,10 @@ QPixmap* current_pixmap = nullptr;
 QPixmap* next_pixmap = nullptr;
 std::mutex pixmap_mutex;
 
-
+//Added mutex in init and drawn_board to ensure current_pixmap and next_pixmap can only be accesed
+//by one thread at the same time.
 void init(void) {
+
     pixmap_mutex.lock();
     current_pixmap = new QPixmap( config::width, config::height );
     current_pixmap->fill( bgColor );

@@ -32,6 +32,7 @@ void GrTimer::closing()
 void GrTimer::timerEvent(QTimerEvent*)
 {
     qDebug() << "GrTimer tick";
+    //Added synchronisation with update thread
     std::unique_lock<std::mutex> lock(world_mutex);
     world_cv.wait(lock, [&]() { return world_updated.load(); });
 

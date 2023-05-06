@@ -60,9 +60,7 @@ int main(int argc, char *argv[])
 
     std::thread update( [&]() {
         while(world::running) {
-            //auto start_time = std::chrono::steady_clock::now();
             std::this_thread::sleep_for( config::world_tick );
-
             {
                 std::unique_lock<std::mutex> lock(world_mutex);
                 for (size_t i = 0; i < num_threads; ++i) {
@@ -83,12 +81,6 @@ int main(int argc, char *argv[])
                 std::swap( world::current, world::next );
                 world_updated = true;
             }
-            //auto end_time = std::chrono::steady_clock::now();
-            //auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-
-            //if (elapsed_time < config::world_tick) {
-                        //std::this_thread::sleep_for(config::world_tick - elapsed_time);
-            //}
             world_cv.notify_one();
         };
     });
