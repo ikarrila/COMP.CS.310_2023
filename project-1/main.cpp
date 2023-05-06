@@ -10,6 +10,7 @@
 #include "world.hh"
 #include "graphics.hh"
 #include "grtimer.hh"
+#include "thread_pool.hh"
 
 #include "tuni.hh"
 TUNI_WARN_OFF()
@@ -21,7 +22,6 @@ TUNI_WARN_ON()
 
 #include <thread>
 #include <chrono>
-
 
 int main(int argc, char *argv[])
 {
@@ -49,18 +49,42 @@ int main(int argc, char *argv[])
     GrTimer myTimer( &grarea );
     QObject::connect(&app,SIGNAL(aboutToQuit()),&myTimer,SLOT(closing()));
 
-
     // new thread to periodically update the
     // simulation world
+    const size_t num_threads = 10;
+    const size_t rows_per_thread = config::height / num_threads;
+    ThreadPool thread_pool(num_threads);
+
     std::thread update( [&]() {
         while(world::running) {
+            auto start_time = std::chrono::steady_clock::now();
             std::this_thread::sleep_for( config::world_tick );
 
             {
                 std::unique_lock<std::mutex> lock(world_mutex);
+                for (size_t i = 0; i < num_threads; ++i) {
+                    size_t start_row = i * rows_per_thread;
+                    size_t end_row = (i == num_threads - 1) ? config::height : (i + 1) * rows_per_thread;
+                    thread_pool.enqueue([=] {
+                        world::next_generation(start_row, end_row);
+                    });
+                }
+                std::cout << "Waiting for all tasks to finish" << std::endl;
+
+
+                std::cout << "Total threads: " << thread_pool.get_total_threads() << std::endl;
+                std::cout << "Active threads: " << thread_pool.get_active_threads() << std::endl;
+
+                thread_pool.wait_all(); // wait for all tasks to finish
                 world::update_concurrent();
                 world_updated = true;
                 //world::next_generation();
+            }
+            auto end_time = std::chrono::steady_clock::now();
+            auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+
+            if (elapsed_time < config::world_tick) {
+                        std::this_thread::sleep_for(config::world_tick - elapsed_time);
             }
             world_cv.notify_one();
         };

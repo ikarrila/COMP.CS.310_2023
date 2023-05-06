@@ -4,6 +4,7 @@
 #include <memory>
 #include <array>
 #include "config.hh"
+#include "thread_pool.hh"
 
 namespace world
 {
@@ -22,7 +23,7 @@ namespace world
     extern std::atomic<bool> running;
 
     void init(void);
-    void next_generation(void);
+    void next_generation(size_t start, size_t end);
     void update_concurrent();
 
     // --------------------------------------------------------------------------------------------
