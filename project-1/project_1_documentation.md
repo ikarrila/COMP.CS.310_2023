@@ -6,25 +6,25 @@ Rasmus Ähtävä 150189389
 
  
 
-    Mitä rinnakkaisuuden ongelmia löysitte pohjakoodista? 
+**Mitä rinnakkaisuuden ongelmia löysitte pohjakoodista?**
 
-    Qrtimer.cpp luokassa funktiossa init tulee kilpailutilanne, jos useampi säie käsittelee current_pixmap ja next_pixmap samanaikaisesti. Sama tilanne on myös funktiossa draw_board. Lisäksi tässä funktiossa on operaatio swap, joka voi toimia odottamattomalla tavalla, jos next_pixmap ja current_pixmap eivät ole synkronoituja sen kutsuhetkellä. 
+Qrtimer.cpp luokassa funktiossa init tulee kilpailutilanne, jos useampi säie käsittelee current_pixmap ja next_pixmap samanaikaisesti. Sama tilanne on myös funktiossa draw_board. Lisäksi tässä funktiossa on operaatio swap, joka voi toimia odottamattomalla tavalla, jos next_pixmap ja current_pixmap eivät ole synkronoituja sen kutsuhetkellä. 
 
-    Qrgraphics.cpp luokassa metodissa timerEvent ongelmana on, että GrTimer -säie ja world -säie eivät synkronoidu. World-säie voi päivittää pelitilaa samalla kun draw_board() käsittelee sitä GrTimer-säikeessä, mikä voi aiheuttaa kilpailutilanteen ja odottamattomia tuloksia. 
+Qrgraphics.cpp luokassa metodissa timerEvent ongelmana on, että GrTimer -säie ja world -säie eivät synkronoidu. World-säie voi päivittää pelitilaa samalla kun draw_board() käsittelee sitä GrTimer-säikeessä, mikä voi aiheuttaa kilpailutilanteen ja odottamattomia tuloksia. 
 
  
 
-    Main.cpp:  
+Main.cpp:  
 
 Datakilpailu, pääsäikeen ja update-säikeen välillä ei ole synkronisaatiota. Molemmat säikeet voivat tämän vuoksi päätyä käyttämään yhtä aikaa world-statea. 
 
 Resurssihukka, kun näiden kahden threadin välillä ei ole synkronisaatiota update-thread voi esim. päivittää maailmaa nopeammin kuin main kerkeää piirtää sitä. 
 
-    World.cpp -luokassa voi syntyä ongelmia next_generation funktion kanssa, jos useampi säie pääsee muokkaamaan pelitilaa samanaikaisesti. Tästä seuraa kilpailutilanne ja voidaan kokea odottamatonta toimintaa. 
+World.cpp -luokassa voi syntyä ongelmia next_generation funktion kanssa, jos useampi säie pääsee muokkaamaan pelitilaa samanaikaisesti. Tästä seuraa kilpailutilanne ja voidaan kokea odottamatonta toimintaa. 
 
  
 
-    Miten em. ongelmat korjattiin palautuksessanne? 
+**Miten em. ongelmat korjattiin palautuksessanne?**
 
 Qrtimer luokassa lisättiin mutexit suojaamaan kriittisiä alueita sekä init funktioon että draw_board funktioon. 
 
@@ -40,16 +40,16 @@ Aluksi testattiin käynnistettävien säikeiden määrän määrittelyä koneen 
 
  
 
-    Selosta suunnitelmanne useamman säikeen käyttöön maailman päivityksessä ja miten toteutitte suunnitelmanne? (palautuksessa tulee selvästi näkyä mikä on ryhmän tekemää ja ja mikä on valmista pohjakoodia) 
+**Selosta suunnitelmanne useamman säikeen käyttöön maailman päivityksessä ja miten toteutitte suunnitelmanne? (palautuksessa tulee selvästi näkyä mikä on ryhmän tekemää ja ja mikä on valmista pohjakoodia)**
 
 Ryhmän tekemää: 
 
-    Threadpool –luokka 
+* Threadpool –luokka 
 
-    Uusi world::next_generation() -metodi 
+* Uusi world::next_generation() -metodi 
 
-    World::update_concurrent() -metodi 
+* World::update_concurrent() -metodi 
 
-    mutex world_mutex, condition_variable world_cv, atomic<bool> world_updated 
+* mutex world_mutex, condition_variable world_cv, atomic<bool> world_updated 
 
 Suunnitelmana oli jakaa maailma chunkkeihin, joita jaetaan threadeille ajoon. Kaikkien threadien valmistuttua lopetetaan threadpool ja päivitetään iteraatio. Threadien synkronoituminen grafiikkapiirturin kanssa varmistetaan omalla lukituksellaan. Mutex world_mutex etc. pitää huolen, ettei update-thread(ja sen threadpool threadit) päivitä maailmaa samaan aikaan kuin main-thread piirtää sitä. 
