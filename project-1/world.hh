@@ -24,8 +24,6 @@ namespace world
 
     void init(void);
     void next_generation(size_t start, size_t end);
-    void update_concurrent();
-
     // --------------------------------------------------------------------------------------------
     // various helper routines to process (x,y) coordinates with one flat std::array datastructure:
 
