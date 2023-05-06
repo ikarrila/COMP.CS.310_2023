@@ -1,7 +1,9 @@
 Rinnakkaisuus COMP.CS.310 
 
 Iivari Karrila K437292 
+
 Akseli Ahonen 150313812 
+
 Rasmus Ähtävä 150189389 
 
  
