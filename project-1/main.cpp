@@ -51,13 +51,16 @@ int main(int argc, char *argv[])
 
     // new thread to periodically update the
     // simulation world
-    const size_t num_threads = 10;
+    //const size_t num_threads = std::thread::hardware_concurrency();
+    //In the Linux virtual environment, the maximum number of threads was only 4
+
+    const size_t num_threads = 20;
     const size_t rows_per_thread = config::height / num_threads;
     ThreadPool thread_pool(num_threads);
 
     std::thread update( [&]() {
         while(world::running) {
-            auto start_time = std::chrono::steady_clock::now();
+            //auto start_time = std::chrono::steady_clock::now();
             std::this_thread::sleep_for( config::world_tick );
 
             {
@@ -76,16 +79,16 @@ int main(int argc, char *argv[])
                 std::cout << "Active threads: " << thread_pool.get_active_threads() << std::endl;
 
                 thread_pool.wait_all(); // wait for all tasks to finish
-                world::update_concurrent();
+                std::cout << "Tasks completed" << std::endl;
+                std::swap( world::current, world::next );
                 world_updated = true;
-                //world::next_generation();
             }
-            auto end_time = std::chrono::steady_clock::now();
-            auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+            //auto end_time = std::chrono::steady_clock::now();
+            //auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
-            if (elapsed_time < config::world_tick) {
-                        std::this_thread::sleep_for(config::world_tick - elapsed_time);
-            }
+            //if (elapsed_time < config::world_tick) {
+                        //std::this_thread::sleep_for(config::world_tick - elapsed_time);
+            //}
             world_cv.notify_one();
         };
     });

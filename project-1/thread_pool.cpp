@@ -1,5 +1,4 @@
 #include "thread_pool.hh"
-
 ThreadPool::ThreadPool(size_t num_threads) : stop(false) {
     // Iterate through the number of requested threads
     for (size_t i = 0; i < num_threads; ++i) {
