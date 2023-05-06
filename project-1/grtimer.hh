@@ -14,8 +14,9 @@ TUNI_WARN_ON()
 // 2. get notification of the application closing
 //
 
-
+// used for syncing updating the world and drawing it
 extern std::mutex world_mutex;
+// used for syncing the above mutex
 extern std::condition_variable world_cv;
 extern std::atomic<bool> world_updated;
 
